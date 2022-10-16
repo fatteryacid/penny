@@ -131,3 +131,7 @@ dmypy.json
 # Secret
 .secret 
 secret/
+
+# Jupyter NB
+.ipynb_checkpoints
+tests.ipynb 
