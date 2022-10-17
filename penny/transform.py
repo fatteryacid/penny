@@ -6,6 +6,34 @@ import pandas pd
 
 # ==================================================
 # Functions
+def process_item_desc(df):
+    df['item'] = df['item'].str.lower().str.strip()
+
+
+def process_amount(df):
+    #Remove undesirable characters
+    df['amount'] = df['amount'].str.replace('$', '', regex=False)
+    df['amount'] = df['amount'].str.replace(' ', '', regex=False)
+    
+    #Handle negative numbers in accounting format
+    temp = []
+    
+    for i in df.itertuples():
+        j = str(i[3])
+        
+        if '(' in j and ')' in j:
+            j = j.replace('(', '')
+            j = j.replace(')', '')
+            j = '-' + j
+            
+        temp.append(j)
+    
+        
+    df['amount'] = temp
+    df['amount'] = pd.to_numeric(df['amount'])
+    return df
+
+
 def build_dataframe(worksheet, existing_tid=None, split_list=None):
     payload = pd.DataFrame(worksheet)
 
@@ -52,34 +80,6 @@ def build_dataframe(worksheet, existing_tid=None, split_list=None):
 
 def process_dates(df):
     pass
-
-
-def process_item_desc(df):
-    df['item'] = df['item'].str.lower().str.strip()
-
-
-def process_amount(df):
-    #Remove undesirable characters
-    df['amount'] = df['amount'].str.replace('$', '', regex=False)
-    df['amount'] = df['amount'].str.replace(' ', '', regex=False)
-    
-    #Handle negative numbers in accounting format
-    temp = []
-    
-    for i in df.itertuples():
-        j = str(i[3])
-        
-        if '(' in j and ')' in j:
-            j = j.replace('(', '')
-            j = j.replace(')', '')
-            j = '-' + j
-            
-        temp.append(j)
-    
-        
-    df['amount'] = temp
-    df['amount'] = pd.to_numeric(df['amount'])
-    return df 
 
 
 def process_category(df):
