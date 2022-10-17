@@ -25,7 +25,6 @@ def build_dataframe(worksheet, existing_tid=None, split_list=None):
 
     #Drop unused column(s)
     payload = payload.drop('per person', axis=1)
-    tid = []
     
     #Ensure distribution point(s) are integer values
     if split_list != None:
@@ -33,19 +32,14 @@ def build_dataframe(worksheet, existing_tid=None, split_list=None):
                 payload[name] = pd.to_numeric(payload[name], downcast='integer')
     
     #Build TID codes
-    for i in payload.itertuples():
-        temp = str(i[0])
-        temp += str(i[1]).replace('/', '')
-        temp += str(i[2]).replace(' ', '').lower()
-        temp += str(i[6])
-        temp += str(i[7])
-        temp += str(i[8])
-        
-        tid.append(temp)
-        
-    #Add new col to dataframe
-    payload['tid'] = tid
+    tid = []
     
+    for i in range(len(payload)):
+        rando = uuid.uuid4().hex
+        tid.append(rando)
+        
+    payload['tid'] = tid
+
     #Check for save state
     if existing_tid == None:
         return payload
