@@ -6,7 +6,7 @@ import pandas pd
 
 # ==================================================
 # Functions
-def build_dataframe(worksheet, num_split, existing_tid):
+def build_dataframe(worksheet, existing_tid=None, split_list=None):
     payload = pd.DataFrame(worksheet)
 
     #Cleanup column names
@@ -18,12 +18,22 @@ def build_dataframe(worksheet, num_split, existing_tid):
 
     clean_names = {k:v for k, v in container}
     payload = payload.rename(clean_names, axis=1)
+    
+    #Cleanup empty string imports
+    payload = payload.replace('', np.nan)
+    payload = payload.dropna()
 
-
+    #Drop unused column(s)
     payload = payload.drop('per person', axis=1)
     tid = []
-
-    for i in payload.itertuples(): #Build tid codes
+    
+    #Ensure distribution point(s) are integer values
+    if split_list != None:
+           for name in split_list:
+                payload[name] = pd.to_numeric(payload[name], downcast='integer')
+    
+    #Build TID codes
+    for i in payload.itertuples():
         temp = str(i[0])
         temp += str(i[1]).replace('/', '')
         temp += str(i[2]).replace(' ', '').lower()
