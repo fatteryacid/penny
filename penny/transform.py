@@ -55,7 +55,27 @@ def process_item_desc(df):
 
 
 def process_amount(df):
-    pass 
+    #Remove undesirable characters
+    df['amount'] = df['amount'].replace('$', '')
+    df['amount'] = df['amount'].replace(' ', '')
+    
+    #Handle negative numbers in accounting format
+    temp = []
+    
+    for i in df.itertuples():
+        j = str(i[3])
+        
+        if '(' in j and ')' in j:
+            j = j.replace('(', '')
+            j = j.replace(')', '')
+            j = '-' + j
+            
+        temp.append(j)
+    
+        
+    df['amount'] = temp
+    df['amount'] = pd.to_numeric(df['amount'])
+    return df 
 
 
 def process_category(df):
