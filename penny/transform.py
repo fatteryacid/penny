@@ -66,8 +66,8 @@ def process_item_desc(df):
 
 def process_amount(df):
     #Remove undesirable characters
-    df['amount'] = df['amount'].replace('$', '')
-    df['amount'] = df['amount'].replace(' ', '')
+    df['amount'] = df['amount'].str.replace('$', '', regex=False)
+    df['amount'] = df['amount'].str.replace(' ', '', regex=False)
     
     #Handle negative numbers in accounting format
     temp = []
