@@ -43,7 +43,19 @@ def process_category(df):
     return df
 
 
-def build_dataframe(worksheet, existing_tid=None, split_list=None):
+def build_eid(df):
+    eid = []
+    
+    for i in range(len(df)):
+        rando = uuid.uuid4().hex
+        eid.append(rando)
+        
+    df['eid'] = eid
+    
+    return df
+
+
+def build_dataframe(worksheet, existing_eid=None, split_list=None):
     payload = pd.DataFrame(worksheet)
 
     #Cleanup column names
@@ -68,21 +80,20 @@ def build_dataframe(worksheet, existing_tid=None, split_list=None):
            for name in split_list:
                 payload[name] = pd.to_numeric(payload[name], downcast='integer')
     
-    #Build TID codes
-    tid = []
+    #EID logic
+    payload = build_eid(payload)
     
-    for i in range(len(payload)):
-        rando = uuid.uuid4().hex
-        tid.append(rando)
-        
-    payload['tid'] = tid
+    #Cleanup functions
+    payload = process_item_desc(payload)
+    payload = process_amount(payload)
+    payload = process_category(payload)
 
     #Check for save state
-    if existing_tid == None:
+    if existing_eid == None:
         return payload
     
     else:
-        lower_bound = payload.loc[payload['tid'] == existing_tid].index[0]
+        lower_bound = payload.loc[payload['eid'] == existing_eid].index[0]
         return payload.iloc[lower_bound:, :]
         
 
