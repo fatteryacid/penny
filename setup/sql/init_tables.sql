@@ -1,4 +1,5 @@
--- script to be ran for creating table
+-- Scripts to create shell tables and set relations
+-- To be ran by setup.sh on first run
 
 -- Category & Subcategory group
 CREATE TABLE d_category (
@@ -31,6 +32,20 @@ CREATE TABLE d_vendor (
 );
 
 
+-- Fact table
+CREATE TABLE f_entry (
+    eid VARCHAR(36) NOT NULL,
+    category_relation_id INT NOT NULL,
+    vendor_id INT NOT NULL,
+    amount DECIMAL,
+    entry_record_date DATE,
+    last_updated DATETIME,
+    PRIMARY KEY eid,
+    FOREIGN KEY category_relation_id REFERENCES d_category_subcategory(category_relation_id),
+    FOREIGN KEY vendor_id REFERENCES d_vendor(vendor_id)
+);
+
+
 -- Person group
 CREATE TABLE d_person (
     person_id SERIAL NOT NULL,
@@ -39,10 +54,11 @@ CREATE TABLE d_person (
     PRIMARY KEY person_id
 );
 
-CREATE TABLE d_person_distribution (    -- Something is off here, but not sure what
+CREATE TABLE d_person_distribution (
     distribution_id BIGSERIAL NOT NULL,
     eid VARCHAR(36),
     person_id INT NOT NULL,
     PRIMARY KEY distribution_id,
-
-)
+    FOREIGN KEY eid REFERENCES f_entry(eid),
+    FOREIGN KEY person_id REFERENCES d_person(person_id)
+);
