@@ -36,6 +36,13 @@ def process_amount(df):
     return df
 
 
+def process_category(df):
+    df['category'] = df['category'].str.lower().str.strip()
+    df['subcategory'] = df['subcategory'].str.lower().str.strip()
+    df['subcategory'] = df['subcategory'].str.replace(' ', '_', regex=False)
+    return df
+
+
 def build_dataframe(worksheet, existing_tid=None, split_list=None):
     payload = pd.DataFrame(worksheet)
 
@@ -78,23 +85,4 @@ def build_dataframe(worksheet, existing_tid=None, split_list=None):
         lower_bound = payload.loc[payload['tid'] == existing_tid].index[0]
         return payload.iloc[lower_bound:, :]
         
-
-
-def process_dates(df):
-    pass
-
-
-def process_category(df):
-    pass 
-
-
-def process_vendor(df):
-    pass 
-
-
-def process_distribution(df):
-    pass 
-
-
-
 
