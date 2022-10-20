@@ -57,6 +57,14 @@ def process_amount(df):
     return df
 
 
+def process_ignore(df, ignore_list=None):
+    if ignore_list is not None:
+        for colname in ignore_list:
+            df = df.drop(colname, axis=1)
+    
+    return df
+
+
 def trunc_df(df, latest_id=None):
     #Truncate df if id exists
     if latest_id is not None:
