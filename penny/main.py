@@ -1,5 +1,7 @@
 # ==================================================
 # Imports
+import pandas as pd
+
 import json
 import urllib.parse
 from sqlalchemy import create_engine
@@ -12,22 +14,38 @@ import load as ld
 
 # ==================================================
 # Variables
-with open('../secret/secret.json') as f:
-    login = json.load(f)
+with open('../secret/secret_config.json') as f:
+    meta = json.load(f)
+    db = meta['database_information']
+    config = meta['config']
     f.close()
 
-engine = create_engine(f'postgresql+psycopg2://{login["db-user"]}:{urllib.parse.quote_plus(login["db-pass"])}@{login["db-host"]}:{login["db-port"]}/{login["db-name"]}')
+engine = create_engine(f'postgresql+psycopg2://{db["db-user"]}:{urllib.parse.quote_plus(db["db-pass"])}@{db["db-host"]}:{db["db-port"]}/{db["db-name"]}')
 
 
 
 # ==================================================
 # Def main
 def main():
+    #Retrieve data
+    data = ld.get_data(config['target_sheet'], config['worksheet_location'])
+    
+    #Basic data cleanup
+    data = tr.process_colname(data)
+    data = tr.process_string(data, column_list=[
+        config['mapping']['id'],
+        config['mapping']['item'],
+        config['mapping']['category'],
+        config['mapping']['subcategory'],
+        config['mapping']['vendor']    
+    ])
+    data = tr.process_distribution(data, column_list=config['mapping']['distribution'])
+    data = tr.process_amount(data)
+    data = tr.process_ignore(data, config['mapping']['ignore'])
 
-    with engine.connect() as connection:
-        result = connection.execute(text("select username from users"))
-        for row in result:
-            print("username:", row["username"])
+    #Formatting
+
+
 
 
 
