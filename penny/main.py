@@ -44,8 +44,11 @@ def main():
     data = tr.process_ignore(data, config['mapping']['ignore'])
 
     #Formatting
-
-
+    data = tr.format_labels(data, column_list=[
+        config['mapping']['category'],
+        config['mapping']['subcategory'],
+        config['mapping']['vendor']
+    ])
 
 
 
