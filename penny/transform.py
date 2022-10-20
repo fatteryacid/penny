@@ -8,8 +8,34 @@ import uuid
 
 # ==================================================
 # Functions
-def process_item_desc(df):
-    df['item'] = df['item'].str.lower().str.strip()
+def process_colname(df):
+    container = []
+    for i in df.columns.to_list():
+        j = str(i).strip()
+        k = (i, j)
+        container.append(k)
+
+    clean_names = {k:v for k, v in container}
+    df = df.rename(clean_names, axis=1)
+    return df
+
+
+def process_string(df, target_columns):
+    for i in target_columns:
+        df[i] = df[i].str.lower()
+        df[i] = df[i].str.strip()
+            
+        if i == 'subcategory':
+            df[i] = df[i].str.replace(' ', '_', regex=False)
+                
+    return df
+
+
+def process_distribution(df, target_columns):
+    for i in target_columns:
+        df[i] = pd.to_numeric(df[i], downcast='integer')
+    
+    return df
 
 
 def process_amount(df):
@@ -30,20 +56,12 @@ def process_amount(df):
             
         temp.append(j)
     
-        
     df['amount'] = temp
     df['amount'] = pd.to_numeric(df['amount'])
     return df
 
 
-def process_category(df):
-    df['category'] = df['category'].str.lower().str.strip()
-    df['subcategory'] = df['subcategory'].str.lower().str.strip()
-    df['subcategory'] = df['subcategory'].str.replace(' ', '_', regex=False)
-    return df
-
-
-def build_eid(df):
+def init_eid(df):
     eid = []
     
     for i in range(len(df)):
@@ -57,36 +75,16 @@ def build_eid(df):
 
 def build_dataframe(worksheet, existing_eid=None, split_list=None):
     payload = pd.DataFrame(worksheet)
-
-    #Cleanup column names
-    container = []
-    for i in payload.columns.to_list():
-        j = str(i).strip()
-        k = (i, j)
-        container.append(k)
-
-    clean_names = {k:v for k, v in container}
-    payload = payload.rename(clean_names, axis=1)
     
-    #Cleanup empty string imports
-    payload = payload.replace('', np.nan)
-    payload = payload.dropna()
-
     #Drop unused column(s)
     payload = payload.drop('per person', axis=1)
     
-    #Ensure distribution point(s) are integer values
-    if split_list != None:
-           for name in split_list:
-                payload[name] = pd.to_numeric(payload[name], downcast='integer')
-    
+
     #EID logic
-    payload = build_eid(payload)
+        #if column does not exist, create it and populate it
+        #else, take subset without eids, generate eids for them
+        #all cases, commit eid changes to sheet
     
-    #Cleanup functions
-    payload = process_item_desc(payload)
-    payload = process_amount(payload)
-    payload = process_category(payload)
 
     #Check for save state
     if existing_eid == None:
