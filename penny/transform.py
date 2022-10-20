@@ -1,9 +1,7 @@
 # ==================================================
 # Imports
 import pandas pd
-import numpy np 
-import uuid
-
+import numpy np
 
 
 # ==================================================
@@ -20,20 +18,18 @@ def process_colname(df):
     return df
 
 
-def process_string(df, target_columns):
-    for i in target_columns:
-        df[i] = df[i].str.lower()
-        df[i] = df[i].str.strip()
-            
-        if i == 'subcategory':
-            df[i] = df[i].str.replace(' ', '_', regex=False)
+def process_string(df, column_list=None):
+    if column_list is not None:
+        for i in column_list:
+            df[i] = df[i].str.strip()
                 
     return df
 
 
-def process_distribution(df, target_columns):
-    for i in target_columns:
-        df[i] = pd.to_numeric(df[i], downcast='integer')
+def process_distribution(df, column_list=None):
+    if column_list is not None:
+        for i in column_list:
+            df[i] = pd.to_numeric(df[i], downcast='integer')
     
     return df
 
@@ -47,7 +43,7 @@ def process_amount(df):
     temp = []
     
     for i in df.itertuples():
-        j = str(i[3])
+        j = str(i[4])
         
         if '(' in j and ')' in j:
             j = j.replace('(', '')
@@ -61,37 +57,16 @@ def process_amount(df):
     return df
 
 
-def init_eid(df):
-    eid = []
-    
-    for i in range(len(df)):
-        rando = uuid.uuid4().hex
-        eid.append(rando)
-        
-    df['eid'] = eid
+def trunc_df(df, latest_id=None):
+    #Truncate df if id exists
+    if latest_id is not None:
+        index = df.index[df['id'] == latest_id].to_list()[0]
+        df = df.truncate(before=index)
     
     return df
 
 
-def build_dataframe(worksheet, existing_eid=None, split_list=None):
-    payload = pd.DataFrame(worksheet)
-    
-    #Drop unused column(s)
-    payload = payload.drop('per person', axis=1)
-    
-
-    #EID logic
-        #if column does not exist, create it and populate it
-        #else, take subset without eids, generate eids for them
-        #all cases, commit eid changes to sheet
-    
-
-    #Check for save state
-    if existing_eid == None:
-        return payload
-    
-    else:
-        lower_bound = payload.loc[payload['eid'] == existing_eid].index[0]
-        return payload.iloc[lower_bound:, :]
-        
-
+def format_labels(df):
+    if i == 'subcategory':
+        df[i] = df[i].str.lower()
+        df[i] = df[i].str.replace(' ', '_', regex=False)
