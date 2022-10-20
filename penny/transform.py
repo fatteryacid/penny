@@ -6,6 +6,7 @@ import numpy np
 
 # ==================================================
 # Functions
+# Basic processing
 def process_colname(df):
     container = []
     for i in df.columns.to_list():
@@ -64,7 +65,7 @@ def process_ignore(df, ignore_list=None):
     
     return df
 
-
+# Deep processing
 def trunc_df(df, latest_id=None):
     #Truncate df if id exists
     if latest_id is not None:
@@ -74,7 +75,12 @@ def trunc_df(df, latest_id=None):
     return df
 
 
-def format_labels(df):
-    if i == 'subcategory':
-        df[i] = df[i].str.lower()
-        df[i] = df[i].str.replace(' ', '_', regex=False)
+def format_labels(df, column_list=None):
+    if column_list is not None:
+        for colname in column_list:
+            df[colname] = df[colname].str.lower()
+            df[colname] = df[colname].str.replace("[@#$%^&*()']", '', regex=True)
+            df[colname] = df[colname].str.replace('[-\s]', '_', regex=True)
+            df[colname] = df[colname].str.replace('_{2,}', '_', regex=True)
+            
+    return df
