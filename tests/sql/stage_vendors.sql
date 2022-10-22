@@ -3,7 +3,7 @@ DROP TABLE d_vendor;
 
 CREATE TABLE d_vendor (
     vendor_id SERIAL NOT NULL PRIMARY KEY,
-    vendor_desc VARCHAR(100)
+    vendor_desc VARCHAR(100) UNIQUE
 );
 
 INSERT INTO d_vendor (vendor_desc)
