@@ -2,7 +2,11 @@
 # Imports
 import pandas pd 
 from sqlalchemy import create_engine
-from sqlalchemy import text
+from sqlalchemy import table 
+from sqlalchemy import column
+from sqlalchemy import select
+from sqlalchemy import distinct
+from sqlalchemy import exc 
 
 
 # ==================================================
@@ -42,12 +46,14 @@ def insert_vendors(engine_url, new_vendor_list):
     for i in new_vendor_list:
         payload.append({'vendor_desc': str(i)})
         
-    with db.connect() as conn:
-        insert = vend.insert()
-        conn.execute(insert, payload)
-        
-        conn.close()
-        
+    try:
+        with db.connect() as conn:
+            insert = vend.insert()
+            conn.execute(insert, payload)
+            conn.close()
+    except exc.IntegrityError:
+        print('WARNING: Attempted to create duplicate data.')
+    
     db.dispose()
             
 
