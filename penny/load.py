@@ -7,15 +7,48 @@ from sqlalchemy import text
 
 # ==================================================
 # Functions
-def check_vendors(df, engine):
-    df['store'].drop_duplicates(inplace=True)
+def get_vendors(engine_url):
+    #Create SQL Statement
+    db = create_engine(engine_url)
+    vend = table('d_vendor',
+                column('vendor_id'),
+                column('vendor_desc')
+            )
     
+    stmt = select(vend.c.vendor_id.distinct(), vend.c.vendor_desc)
+    
+    #Send query to DB
+    with db.connect() as conn:
+        result = conn.execute(stmt)
+        payload = []
+        
+        for i in result:
+            payload.append(i)
+            
+        conn.close()
+    
+    db.dispose()
+    return payload
 
-    with engine.connect() as conn:
-        db_list = conn.execute(
-            text('SELECT DISTINCT vendor_desc FROM d_vendors')
-        )
 
+def insert_vendors(engine_url, new_vendor_list):
+    db = create_engine(engine_url)
+    vend = table('d_vendor',
+                column('vendor_desc')
+            )
+    
+    payload = []
+    
+    for i in new_vendor_list:
+        payload.append({'vendor_desc': str(i)})
+        
+    with db.connect() as conn:
+        insert = vend.insert()
+        conn.execute(insert, payload)
+        
+        conn.close()
+        
+    db.dispose()
             
 
 
