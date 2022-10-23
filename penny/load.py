@@ -12,7 +12,6 @@ from sqlalchemy import exc
 # ==================================================
 # Functions
 def get_vendors(engine_url):
-    #Create SQL Statement
     db = create_engine(engine_url)
     vend = table('d_vendor',
                 column('vendor_id'),
@@ -21,13 +20,13 @@ def get_vendors(engine_url):
     
     stmt = select(vend.c.vendor_id.distinct(), vend.c.vendor_desc)
     
-    #Send query to DB
+    #Make connection
     with db.connect() as conn:
         result = conn.execute(stmt)
-        payload = []
+        payload = {}
         
         for i in result:
-            payload.append(i)
+            payload[i[1]] = i[0]
             
         conn.close()
     
@@ -55,6 +54,32 @@ def insert_vendors(engine_url, new_vendor_list):
         print('WARNING: Attempted to create duplicate data.')
     
     db.dispose()
+
+
+def get_id_of(engine_url, relation_name, id_colname, description_colname, label):
+    db = create_engine(engine_url)
+    cat = table(relation_name,
+                column(id_colname),
+                column(description_colname)
+            )
+    
+    stmt = select(cat.c[id_colname]).where(cat.c[description_colname] == label)
+    
+    #Make connection
+    with db.connect() as conn:
+        result = conn.execute(stmt).fetchall()
+            
+        conn.close()
+    
+    db.dispose()
+    
+    #Catch empty return or more than 1 return
+    if len(result) == 0:
+        raise Exception('FATAL: Search returned empty ID.')
+    elif len(result) > 1:
+        raise Exception('FATAL: Search returned more IDs than expected.')
+    else:
+        return result[0][0]
             
 
 
