@@ -56,14 +56,14 @@ def insert_vendors(engine_url, new_vendor_list):
     db.dispose()
 
 
-def get_id_of(engine_url, relation_name, id_colname, description_colname, label):
+def get_ids(engine_url, relation_name, id_colname, description_colname):
     db = create_engine(engine_url)
-    cat = table(relation_name,
+    t = table(relation_name,
                 column(id_colname),
                 column(description_colname)
             )
     
-    stmt = select(cat.c[id_colname]).where(cat.c[description_colname] == label)
+    stmt = select(t)
     
     #Make connection
     with db.connect() as conn:
@@ -74,12 +74,11 @@ def get_id_of(engine_url, relation_name, id_colname, description_colname, label)
     db.dispose()
     
     #Catch empty return or more than 1 return
-    if len(result) == 0:
+    if len(result) <= 0:
         raise Exception('FATAL: Search returned empty ID.')
-    elif len(result) > 1:
-        raise Exception('FATAL: Search returned more IDs than expected.')
+    
     else:
-        return result[0][0]
+        return result
             
 
 
