@@ -9,7 +9,12 @@ from sqlalchemy import table, column
 
 import extract as ex
 import transform as tr
-import load as ld 
+import load as ld
+
+
+# ==================================================
+# Functions
+
 
 
 # ==================================================
