@@ -56,19 +56,13 @@ def insert_vendors(engine_url, new_vendor_list):
     db.dispose()
 
 
-def get_ids(engine_url, relation_name, id_colname, description_colname):
+def select_from(engine_url, table_object):
     db = create_engine(engine_url)
-    t = table(relation_name,
-                column(id_colname),
-                column(description_colname)
-            )
-    
-    stmt = select(t)
+    stmt = select(table_object)
     
     #Make connection
     with db.connect() as conn:
         result = conn.execute(stmt).fetchall()
-            
         conn.close()
     
     db.dispose()
@@ -79,11 +73,18 @@ def get_ids(engine_url, relation_name, id_colname, description_colname):
     
     else:
         return result
-            
 
-
-def load_to_db(df, engine, behavior):
-    with engine.connect() as conn:
-        conn.execute(
-            text(f'INSERT INTO ')
+def insert_into(engine_url, table_object, value_list):
+    if len(value_list) <= 0:
+        print('WARNING: No values to insert.')
+        return
+    
+    db = create_engine(engine_url)
+    
+    with db.connect() as conn:
+        result = conn.execute(
+            insert(table_object),
+            value_list
         )
+        
+    db.dispose()
