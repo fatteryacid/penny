@@ -4,8 +4,8 @@ import pandas as pd
 
 import json
 import urllib.parse
-from sqlalchemy import create_engine
-from sqlalchemy import text
+
+from sqlalchemy import table, column
 
 import extract as ex
 import transform as tr
