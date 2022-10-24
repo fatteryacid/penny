@@ -1,6 +1,5 @@
 # ==================================================
 # Imports
-import pandas pd 
 from sqlalchemy import create_engine
 from sqlalchemy import select
 from sqlalchemy import distinct
@@ -15,7 +14,7 @@ def select_from(engine_url, table_object):
     
     #Make connection
     with db.connect() as conn:
-        result = conn.execute(stmt).fetchall()
+        result = conn.execute(stmt)
         conn.close()
     
     db.dispose()
@@ -25,7 +24,7 @@ def select_from(engine_url, table_object):
         raise Exception('FATAL: Search returned empty ID.')
     
     else:
-        return result
+        return result.fetchall()
 
 def insert_into(engine_url, table_object, value_list):
     if len(value_list) <= 0:
@@ -44,3 +43,5 @@ def insert_into(engine_url, table_object, value_list):
         print('WARNING: Attempted to create duplicate data')
         
     db.dispose()
+
+    
