@@ -20,7 +20,7 @@ with open('../secret/secret_config.json') as f:
     config = meta['config']
     f.close()
 
-engine = create_engine(f'postgresql+psycopg2://{db["db-user"]}:{urllib.parse.quote_plus(db["db-pass"])}@{db["db-host"]}:{db["db-port"]}/{db["db-name"]}')
+engine_url = (f'postgresql+psycopg2://{db["db-user"]}:{urllib.parse.quote_plus(db["db-pass"])}@{db["db-host"]}:{db["db-port"]}/{db["db-name"]}')
 
 
 
