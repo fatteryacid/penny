@@ -33,22 +33,38 @@ def main():
     #Basic data cleanup
     data = tr.process_colname(data)
     data = tr.process_string(data, column_list=[
-        config['mapping']['id'],
-        config['mapping']['item'],
-        config['mapping']['category'],
-        config['mapping']['subcategory'],
-        config['mapping']['vendor']    
+        config['sheet_mapping']['id'],
+        config['sheet_mapping']['item'],
+        config['sheet_mapping']['category'],
+        config['sheet_mapping']['subcategory'],
+        config['sheet_mapping']['vendor']    
     ])
-    data = tr.process_distribution(data, column_list=config['mapping']['distribution'])
+    data = tr.process_distribution(data, column_list=config['sheet_mapping']['distribution'])
     data = tr.process_amount(data)
-    data = tr.process_ignore(data, config['mapping']['ignore'])
+    data = tr.process_ignore(data, config['sheet_mapping']['ignore'])
 
     #Formatting
     data = tr.format_labels(data, column_list=[
-        config['mapping']['category'],
-        config['mapping']['subcategory'],
-        config['mapping']['vendor']
+        config['sheet_mapping']['category'],
+        config['sheet_mapping']['subcategory'],
+        config['sheet_mapping']['vendor']
     ])
+
+    #Create db table variables
+    vend = table(config['db_mapping']['vendor']['rel_name'],
+            column(['db_mapping']['vendor']['id_col']),
+            column(['db_mapping']['vendor']['desc_col'])
+        )
+    
+    cat = table(config['db_mapping']['category']['rel_name'],
+            column(['db_mapping']['category']['id_col']),
+            column(['db_mapping']['category']['desc_col'])
+        )
+
+    sbcat = table(config['db_mapping']['subcategory']['rel_name'],
+            column(['db_mapping']['subcategory']['id_col']),
+            column(['db_mapping']['subcategory']['desc_col'])
+        )
 
 
 
