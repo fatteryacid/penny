@@ -12,7 +12,7 @@ VALUES
     ('lowes'),
     ('microcenter'),
     ('best_buy'),
-    ('toms_bikes'),
-    ('jennys_auto_body'),
-    ('cafe_boulard')
+    ('costco'),
+    ('ralphs'),
+    ('trader_joes')
 ;
