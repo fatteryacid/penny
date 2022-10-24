@@ -57,19 +57,20 @@ def main():
 
     #Create db table variables
     vend = table(config['db_mapping']['vendor']['rel_name'],
-            column(['db_mapping']['vendor']['id_col']),
-            column(['db_mapping']['vendor']['desc_col'])
+            column(config['db_mapping']['vendor']['id_col']),
+            column(config['db_mapping']['vendor']['desc_col'])
         )
     
     cat = table(config['db_mapping']['category']['rel_name'],
-            column(['db_mapping']['category']['id_col']),
-            column(['db_mapping']['category']['desc_col'])
+            column(config['db_mapping']['category']['id_col']),
+            column(config['db_mapping']['category']['desc_col'])
         )
 
     sbcat = table(config['db_mapping']['subcategory']['rel_name'],
-            column(['db_mapping']['subcategory']['id_col']),
-            column(['db_mapping']['subcategory']['desc_col'])
+            column(config['db_mapping']['subcategory']['id_col']),
+            column(config['db_mapping']['subcategory']['desc_col'])
         )
+
 
 
 
