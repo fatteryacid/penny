@@ -120,13 +120,13 @@ def main():
     cat_dict = table_to_dict(ld.select_from(engine_url, cat))
     sbcat_dict = table_to_dict(ld.select_from(engine_url, sbcat))
     person_dict = dict()
-    for i in select_from(engine_url, person):
+    for i in ld.select_from(engine_url, person):
         person_dict[i[1]] = i[0]
 
     #Send to database
     fact_list = []
     dist_list = []
-    for entry in f.itertuples():
+    for entry in data.itertuples():
         fact_list.append({
             'eid': entry[1],
             'item_desc': entry[3],
@@ -160,8 +160,8 @@ def main():
             })
         
         
-    insert_into(engine_url, fact, fact_list)
-    insert_into(engine_url, distribution, dist_list)
+    ld.insert_into(engine_url, fact, fact_list)
+    ld.insert_into(engine_url, distribution, dist_list)
 
 
 # ==================================================
