@@ -124,9 +124,10 @@ def main():
         person_dict[i[1]] = i[0]
 
     #Send to database
-    send_list = []
+    fact_list = []
+    dist_list = []
     for entry in f.itertuples():
-        send_list.append({
+        fact_list.append({
             'eid': entry[1],
             'item_desc': entry[3],
             'category_id': cat_dict[entry[5]],
@@ -136,8 +137,31 @@ def main():
             'entry_record_date': entry[2],
             'last_updated': datetime.datetime.now().strftime('%m/%d/%Y, %H:%M:%S')
         })
-
-    ld.insert_into(engine_url, fact, send_list)
+        
+        #Needs logic to also add to distribution
+        #This is not a robust system to use
+        #Essentially relying on positional parameters
+        if entry[8] == 1:
+            dist_list.append({
+                "eid": entry[1],
+                "person_id": person_dict[config['sheet_mapping']['distribution'][0]]
+            })
+            
+        if entry[9] == 1:
+            dist_list.append({
+                "eid": entry[1],
+                "person_id": person_dict[config['sheet_mapping']['distribution'][1]]
+            })
+            
+        if entry[10] == 1:
+            dist_list.append({
+                "eid": entry[1],
+                "person_id": person_dict[config['sheet_mapping']['distribution'][2]]
+            })
+        
+        
+    insert_into(engine_url, fact, fact_list)
+    insert_into(engine_url, distribution, dist_list)
 
 
 # ==================================================
