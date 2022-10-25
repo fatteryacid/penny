@@ -1,7 +1,8 @@
 DROP TABLE f_entries;
 
 CREATE TABLE f_entries (
-    eid CHAR(8) NOT NULL PRIMARY KEY,
+    eid CHAR(17) NOT NULL PRIMARY KEY,
+    item_desc VARCHAR(125),
     category_id INT NOT NULL,
     subcategory_id INT NOT NULL,
     vendor_id INT NOT NULL,
