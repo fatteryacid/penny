@@ -7,10 +7,15 @@ CREATE TABLE d_category (
 
 INSERT INTO d_category (category_desc)
 VALUES
+    ('automotive'),
+    ('clothing'),
+    ('dining'),
+    ('education'),
+    ('fee'),
+    ('fitness'),
+    ('gift'),
     ('grocery'),
     ('household'),
     ('office'),
-    ('recreation'),
-    ('education'),
-    ('automotive')
+    ('recreation')
 ;
