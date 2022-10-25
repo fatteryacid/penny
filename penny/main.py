@@ -14,14 +14,10 @@ import load as ld
 
 # ==================================================
 # Functions
-def table_to_dict(table, three=False):
+def table_to_dict(table):
     payload = {}
-    if three:
-        for a, b, c in table:
-            payload[str(b) + str(c)] = a
-    else:
-        for a, b in table:
-            payload[b] = a
+    for a, b in table:
+        payload[b] = a
 
     return payload
 
@@ -123,7 +119,9 @@ def main():
     vend_dict = table_to_dict(ld.select_from(engine_url, vend))
     cat_dict = table_to_dict(ld.select_from(engine_url, cat))
     sbcat_dict = table_to_dict(ld.select_from(engine_url, sbcat))
-    person_dict = table_to_dict(ld.select_from(engine_url, person), three=True)
+    person_dict = dict()
+    for i in select_from(engine_url, person):
+        person_dict[i[1]] = i[0]
 
     #Send to database
     send_list = []
