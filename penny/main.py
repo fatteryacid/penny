@@ -30,6 +30,8 @@ with open('../secret/secret_config.json') as f:
     meta = json.load(f)
     db = meta['database_information']
     config = meta['config']
+    cf_cat = meta['category']
+    cf_sbcat = meta['subcategory']
     f.close()
 
 engine_url = (f'postgresql+psycopg2://{db["db-user"]}:{urllib.parse.quote_plus(db["db-pass"])}@{db["db-host"]}:{db["db-port"]}/{db["db-name"]}')
@@ -39,10 +41,15 @@ engine_url = (f'postgresql+psycopg2://{db["db-user"]}:{urllib.parse.quote_plus(d
 # ==================================================
 # Def main
 def main():
+    #Print to console
+    print('[PENNY] Starting..')
+
     #Retrieve data
+    print('[PENNY] Retrieving data...')
     data = ex.get_data(config['target_sheet'], config['worksheet_location'])
     
     #Basic data cleanup
+    print('[PENNY] Cleaning data..')
     data = tr.process_colname(data)
     data = tr.process_string(data, column_list=[
         config['sheet_mapping']['id'],
@@ -56,6 +63,7 @@ def main():
     data = tr.process_ignore(data, config['sheet_mapping']['ignore'])
 
     #Formatting
+    print('[PENNY] Formatting data...')
     data = tr.format_labels(data, column_list=[
         config['sheet_mapping']['category'],
         config['sheet_mapping']['subcategory'],
@@ -100,8 +108,14 @@ def main():
             column(config['db_mapping']['entry']['entry_date']),
             column(config['db_mapping']['entry']['last_updated'])
         )
+    
+    #Check for category and subcategory inconsistencies
+    print('[PENNY] Checking for record integrity..')
+    ld.verify_count(engine_url, cat, cf_cat)
+    ld.verify_count(engine_url, sbcat, cf_sbcat)
 
     #Check and process new vendors from extract
+    print('[PENNY] Checking for new vendors...')
     cur_vendor = set()
     for i in ld.select_from(engine_url, vend):
         cur_vendor.add(i[1])
@@ -126,6 +140,7 @@ def main():
         person_dict[i[1]] = i[0]
 
     #Send to database
+    print('[PENNY] Communicating with database..')
     fact_list = []
     dist_list = []
     for entry in data.itertuples():
@@ -164,6 +179,8 @@ def main():
         
     ld.insert_into(engine_url, fact, fact_list)
     ld.insert_into(engine_url, distribution, dist_list)
+
+    print('[PENNY] Job complete. Terminating.')
 
 
 # ==================================================
