@@ -6,8 +6,4 @@ CREATE TABLE d_person (
     last_name VARCHAR(30)
 );
 
-INSERT INTO d_person (first_name, last_name)
-VALUES ('mel', 'lname'),
-        ('tyler', 'lname'),
-        ('thomas', 'lname')
-;
+
