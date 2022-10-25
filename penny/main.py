@@ -14,6 +14,16 @@ import load as ld
 
 # ==================================================
 # Functions
+def table_to_dict(table, three=False):
+    payload = {}
+    if three:
+        for a, b, c in table:
+            payload[str(b) + str(c)] = a
+    else:
+        for a, b in table:
+            payload[b] = a
+
+    return payload
 
 
 
@@ -71,7 +81,65 @@ def main():
             column(config['db_mapping']['subcategory']['desc_col'])
         )
 
+    person = table(config['db_mapping']['person']['rel_name'],
+            column(config['db_mapping']['person']['id_col']),
+            column(config['db_mapping']['person']['fname']),
+            column(config['db_mapping']['person']['lname'])
+        )
 
+    distribution = table(config['db_mapping']['distribution']['rel_name'],
+            column(config['db_mapping']['distribution']['id_col']),
+            column(config['db_mapping']['distribution']['entry_id']),
+            column(config['db_mapping']['distribution']['person_id'])
+        )
+
+    fact = table(config['db_mapping']['entry']['rel_name'],
+            column(config['db_mapping']['entry']['id_col']),
+            column(config['db_mapping']['entry']['cat_id']),
+            column(config['db_mapping']['entry']['sbcat_id']),
+            column(config['db_mapping']['entry']['vend_id']),
+            column(config['db_mapping']['entry']['amount']),
+            column(config['db_mapping']['entry']['entry_date']),
+            column(config['db_mapping']['entry']['last_updated'])
+        )
+
+    #Check and process new vendors from extract
+    cur_vendor = set()
+    for i in ld.select_from(engine_url, vend):
+        cur_vendor.add(i[1])
+
+    in_vendor = f['vendor'].unique()
+    new_vendor = []
+
+    for i in in_vendor:
+        if i not in cur_vendor:
+            new_vendor.append(
+                {config['db_mapping']['vendor']['desc_col']: i}
+            )
+
+    ld.insert_into(engine_url, vend, new_vendor)
+
+    #Load IDs from dimension tables
+    vend_dict = table_to_dict(ld.select_from(engine_url, vend))
+    cat_dict = table_to_dict(ld.select_from(engine_url, cat))
+    sbcat_dict = table_to_dict(ld.select_from(engine_url, sbcat))
+    person_dict = table_to_dict(ld.select_from(engine_url, person), three=True)
+
+    #Send to database
+    send_list = []
+    for entry in f.itertuples():
+        send_list.append({
+            'eid': entry[1],
+            'item_desc': entry[3],
+            'category_id': cat_dict[entry[5]],
+            'subcategory_id': sbcat_dict[entry[6]],
+            'vendor_id': vend_dict[entry[7]],
+            'amount': entry[4],
+            'entry_record_date': entry[2],
+            'last_updated': datetime.datetime.now().strftime('%m/%d/%Y, %H:%M:%S')
+        })
+
+    ld.insert_into(engine_url, fact, send_list)
 
 
 # ==================================================
