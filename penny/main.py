@@ -4,6 +4,7 @@ import pandas as pd
 
 import json
 import urllib.parse
+import datetime
 
 from sqlalchemy import table, column
 
@@ -39,7 +40,7 @@ engine_url = (f'postgresql+psycopg2://{db["db-user"]}:{urllib.parse.quote_plus(d
 # Def main
 def main():
     #Retrieve data
-    data = ld.get_data(config['target_sheet'], config['worksheet_location'])
+    data = ex.get_data(config['target_sheet'], config['worksheet_location'])
     
     #Basic data cleanup
     data = tr.process_colname(data)
@@ -91,6 +92,7 @@ def main():
 
     fact = table(config['db_mapping']['entry']['rel_name'],
             column(config['db_mapping']['entry']['id_col']),
+            column(config['db_mapping']['entry']['item_desc']),
             column(config['db_mapping']['entry']['cat_id']),
             column(config['db_mapping']['entry']['sbcat_id']),
             column(config['db_mapping']['entry']['vend_id']),
@@ -104,7 +106,7 @@ def main():
     for i in ld.select_from(engine_url, vend):
         cur_vendor.add(i[1])
 
-    in_vendor = f['vendor'].unique()
+    in_vendor = data['vendor'].unique()
     new_vendor = []
 
     for i in in_vendor:

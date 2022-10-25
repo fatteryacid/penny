@@ -3,6 +3,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy import select
 from sqlalchemy import distinct
+from sqlalchemy import insert
 from sqlalchemy import exc 
 
 
@@ -14,7 +15,7 @@ def select_from(engine_url, table_object):
     
     #Make connection
     with db.connect() as conn:
-        result = conn.execute(stmt)
+        result = conn.execute(stmt).fetchall()
         conn.close()
     
     db.dispose()
@@ -24,7 +25,7 @@ def select_from(engine_url, table_object):
         raise Exception('FATAL: Search returned empty ID.')
     
     else:
-        return result.fetchall()
+        return result
 
 def insert_into(engine_url, table_object, value_list):
     if len(value_list) <= 0:
