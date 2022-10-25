@@ -1,5 +1,74 @@
 {
-    "target_sheet": "Enter your Google Sheet ID here",
-    "worksheet_location": 0,
-    "tid": null
+    "first_start": true,
+    "config": {
+        "target_sheet": "YOUR SHEET ID HERE",
+        "worksheet_location": 0,
+        "existing_id": null,
+        "sheet_mapping": {
+            "id": "id",
+            "date": "date",
+            "item": "item",
+            "amount": "amount",
+            "category": "category",
+            "subcategory": "subcategory",
+            "vendor": "vendor",
+            "distribution": [
+                "PERSON A",
+                "PERSON B",
+                "PERSON C"
+            ],
+            "ignore": [
+                "per person"
+            ]
+        },
+        "db_mapping": {
+            "vendor": {
+                "rel_name": "d_vendor",
+                "id_col": "vendor_id",
+                "desc_col": "vendor_desc"
+            },
+            "category": {
+                "rel_name": "d_category",
+                "id_col": "category_id",
+                "desc_col": "category_desc"
+            },
+            "subcategory": {
+                "rel_name": "d_subcategory",
+                "id_col": "subcategory_id",
+                "desc_col": "subcategory_desc"
+            },
+            "person": {
+                "rel_name": "d_person",
+                "id_col": "person_id",
+                "fname": "first_name",
+                "lname": "last_name"
+            },
+            "distribution": {
+                "rel_name": "d_person_distribution",
+                "id_col": "distribution_id",
+                "entry_id": "eid",
+                "person_id": "person_id"
+            },
+            "entry": {
+                "rel_name": "f_entries",
+                "id_col": "eid",
+                "item_desc": "item_desc",
+                "cat_id": "category_id",
+                "sbcat_id": "subcategory_id",
+                "vend_id": "vendor_id",
+                "amount": "amount",
+                "entry_date": "entry_record_date",
+                "last_updated": "last_updated"
+            }
+        }
+    },
+    "database_information": {
+        "db-user": "YOUR DB USERNAME",
+        "db-pass": "YOUR DB PASSWORD",
+        "db-host": "YOUR DB HOST",
+        "db-port": "YOUR DB PORT",
+        "db-name": "YOUR DB NAME"
+    }
 }
+
+  
