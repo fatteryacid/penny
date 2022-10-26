@@ -3,7 +3,7 @@ DROP TABLE f_entries;
 CREATE TABLE f_entries (
     eid CHAR(17) NOT NULL PRIMARY KEY,
     item_desc VARCHAR(125),
-    type_id INT NOT NULL
+    type_id INT NOT NULL,
     vendor_id INT NOT NULL,
     amount DECIMAL(11,2),
     entry_record_date DATE,
