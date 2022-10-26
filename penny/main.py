@@ -13,6 +13,7 @@ import transform as tr
 import load as ld
 
 
+
 # ==================================================
 # Functions
 def table_to_dict(table):
@@ -34,7 +35,7 @@ with open('../secret/secret_config.json') as f:
     cf_sbcat = meta['subcategory']
     f.close()
 
-engine_url = (f'postgresql+psycopg2://{db["db-user"]}:{urllib.parse.quote_plus(db["db-pass"])}@{db["db-host"]}:{db["db-port"]}/{db["db-name"]}')
+engine_url = (f'postgresql+psycopg2://{db["db_user"]}:{urllib.parse.quote_plus(db["db_pass"])}@{db["db_host"]}:{db["db_port"]}/{db["db_name"]}')
 
 
 
