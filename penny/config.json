@@ -4,6 +4,8 @@
         "target_sheet": "YOUR SHEET ID HERE",
         "worksheet_location": 0,
         "existing_id": null,
+        "needs_cat_update": false,
+        "needs_sbcat_update": false,
         "sheet_mapping": {
             "id": "id",
             "date": "date",
@@ -13,9 +15,7 @@
             "subcategory": "subcategory",
             "vendor": "vendor",
             "distribution": [
-                "PERSON A",
-                "PERSON B",
-                "PERSON C"
+                "YOUR COLUMN NAMES HERE"
             ],
             "ignore": [
                 "per person"
@@ -37,6 +37,12 @@
                 "id_col": "subcategory_id",
                 "desc_col": "subcategory_desc"
             },
+            "type": {
+                "rel_name": "j_type",
+                "id_col": "type_id",
+                "cat": "category_id",
+                "sbcat": "subcategory_id"
+            },
             "person": {
                 "rel_name": "d_person",
                 "id_col": "person_id",
@@ -44,8 +50,8 @@
                 "lname": "last_name"
             },
             "distribution": {
-                "rel_name": "d_person_distribution",
-                "id_col": "distribution_id",
+                "rel_name": "j_distribution",
+                "id_col": "dist_id",
                 "entry_id": "eid",
                 "person_id": "person_id"
             },
@@ -53,8 +59,7 @@
                 "rel_name": "f_entries",
                 "id_col": "eid",
                 "item_desc": "item_desc",
-                "cat_id": "category_id",
-                "sbcat_id": "subcategory_id",
+                "type_id": "type_id",
                 "vend_id": "vendor_id",
                 "amount": "amount",
                 "entry_date": "entry_record_date",
@@ -63,91 +68,102 @@
         }
     },
     "database_information": {
-        "db-user": "YOUR DB USERNAME",
-        "db-pass": "YOUR DB PASSWORD",
-        "db-host": "YOUR DB HOST",
-        "db-port": "YOUR DB PORT",
-        "db-name": "YOUR DB NAME"
-    },
-    "setup": {
-        "category": [
-            "automotive",
-            "clothing",
-            "dining",
-            "education",
-            "fee",
-            "fitness",
-            "gift",
-            "grocery",
-            "household",
-            "office",
-            "recreation"
-        ],
-        "subcategory": [
-            "raw_ingredient",
-            "processed_food",
-            "snack",
-            "beverage",
-            "condiment",
-            "premade_deli",
-            "cookware",
-            "diningware",
-            "appliance",
-            "toiletry",
-            "medicine",
-            "cleaning_supply",
-            "garden",
-            "tool",
-            "decoration",
-            "furniture",
-            "renovation",
-            "organization",
-            "laundry",
-            "home_security",
-            "dine_in",
-            "takeout",
-            "bakery",
-            "drink",
-            "dessert",
-            "membership_fee",
-            "gym_equipment",
-            "workout_accessory",
-            "top",
-            "bottom",
-            "footwear",
-            "accessory",
-            "government_fee",
-            "rent",
-            "peer_to_peer",
-            "penalty_fee",
-            "warehouse_membership",
-            "holiday",
-            "birthday",
-            "random",
-            "computer_system",
-            "computer_part",
-            "computer_accessory",
-            "peripheral",
-            "stationery",
-            "software_subscription",
-            "gas",
-            "car_maintenance",
-            "car_aftermarket",
-            "car_insurance",
-            "textbook",
-            "course_fee",
-            "tuition_fee",
-            "video_game",
-            "game_service",
-            "movie",
-            "streaming_service",
-            "destination",
-            "novel",
-            "outdoor",
-            "arts_and_crafts",
-            "music"
-        ]
+        "db_user": "YOUR DB USERNAME",
+        "db_pass": "YOUR DB PASSWORD",
+        "db_host": "YOUR DB HOST",
+        "db_port": "YOUR DB PORT",
+        "db_name": "YOUR DB NAME",
+        "pre_fill": {
+            "category": {
+                "automotive": [
+                    "gas",
+                    "car_maintenance",
+                    "car_aftermarket",
+                    "car_insurance"
+                ],
+                "clothing": [
+                    "top",
+                    "bottom",
+                    "footwear",
+                    "accessory"
+                ],
+                "dining": [
+                    "dine_in",
+                    "takeout",
+                    "bakery",
+                    "drink",
+                    "dessert"
+                ],
+                "education": [
+                    "textbook",
+                    "course_fee",
+                    "tuition_fee"
+                ],
+                "fee": [
+                    "government_fee",
+                    "rent",
+                    "peer_to_peer",
+                    "penalty_fee",
+                    "store_membership"
+                ],
+                "fitness": [
+                    "membership_fee",
+                    "gym_equipment",
+                    "workout_accessory"
+                ],
+                "gift": [
+                    "holiday",
+                    "birthday",
+                    "random"
+                ],
+                "grocery": [
+                    "raw_ingredient",
+                    "processed_food",
+                    "snack",
+                    "beverage",
+                    "condiment",
+                    "premade_deli"
+                ],
+                "household": [
+                    "cookware",
+                    "diningware",
+                    "appliance",
+                    "toiletry",
+                    "medicine",
+                    "cleaning_supply",
+                    "garden",
+                    "tool",
+                    "decoration",
+                    "furniture",
+                    "renovation",
+                    "organization",
+                    "laundry",
+                    "home_security"
+                ],
+                "office": [
+                    "computer_system",
+                    "computer_part",
+                    "computer_accessory",
+                    "peripheral",
+                    "stationery",
+                    "software_subscription"
+                ],
+                "recreation": [
+                    "video_game",
+                    "game_service",
+                    "movie",
+                    "streaming_service",
+                    "destination",
+                    "novel",
+                    "outdoor",
+                    "arts_and_crafts",
+                    "music"
+                ]
+            }
+        }
     }
 }
+
+
 
   
