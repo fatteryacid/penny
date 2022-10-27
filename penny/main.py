@@ -30,7 +30,7 @@ def table_to_dict(table, inverse=False):
 
 # ==================================================
 # Variables
-with open('../secret/secret_config.json') as f:
+with open('./config.json') as f:
     meta = json.load(f)
     db = meta['database_information']
     config = meta['config']
