@@ -86,17 +86,6 @@ def main():
     #Control for no new updates
     if len(data) > 0:
 
-        #Save state
-        last_eid = data.tail(1).iloc[0]['id']
-        sv['existing_id'] = last_eid
-        new_state = json.dumps(meta, indent=4)
-
-        if type(new_state) != str:
-            raise Exception('[PENNY] FATAL ERROR: Writing to config failed.')
-        else:
-            with open(path['sv'], 'w') as out:
-                out.write(new_state)
-
         #Create db table variables
         vend = table(db['schema']['vendor']['rel_name'],
                 column(db['schema']['vendor']['id_col']),
@@ -212,6 +201,17 @@ def main():
             
         ld.insert_into(engine_url, fact, fact_list)
         ld.insert_into(engine_url, distribution, dist_list)
+
+        #Save state
+        last_eid = data.tail(1).iloc[0]['id']
+        sv['existing_id'] = last_eid
+        new_state = json.dumps(sv, indent=4)
+
+        if type(new_state) != str:
+            raise Exception('[PENNY] FATAL ERROR: Writing to config failed.')
+        else:
+            with open(path['sv'], 'w') as out:
+                out.write(new_state)
     
     else:
         print('[PENNY] No new entries to insert.')
