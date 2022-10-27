@@ -16,10 +16,13 @@ import load as ld
 
 # ==================================================
 # Functions
-def table_to_dict(table):
+def table_to_dict(table, inverse=False):
     payload = {}
     for a, b in table:
-        payload[b] = a
+        if inverse:
+            payload[a] = b 
+        else:
+            payload[b] = a
 
     return payload
 
@@ -31,8 +34,6 @@ with open('../secret/secret_config.json') as f:
     meta = json.load(f)
     db = meta['database_information']
     config = meta['config']
-    cf_cat = meta['category']
-    cf_sbcat = meta['subcategory']
     f.close()
 
 engine_url = (f'postgresql+psycopg2://{db["db_user"]}:{urllib.parse.quote_plus(db["db_pass"])}@{db["db_host"]}:{db["db_port"]}/{db["db_name"]}')
@@ -87,6 +88,12 @@ def main():
             column(config['db_mapping']['subcategory']['desc_col'])
         )
 
+    j_type = table(config['db_mapping']['type']['rel_name'],
+            column(config['db_mapping']['type']['id_col']),
+            column(config['db_mapping']['type']['cat']),
+            column(config['db_mapping']['type']['sbcat'])
+        )
+
     person = table(config['db_mapping']['person']['rel_name'],
             column(config['db_mapping']['person']['id_col']),
             column(config['db_mapping']['person']['fname']),
@@ -102,18 +109,39 @@ def main():
     fact = table(config['db_mapping']['entry']['rel_name'],
             column(config['db_mapping']['entry']['id_col']),
             column(config['db_mapping']['entry']['item_desc']),
-            column(config['db_mapping']['entry']['cat_id']),
-            column(config['db_mapping']['entry']['sbcat_id']),
+            column(config['db_mapping']['entry']['type_id']),
             column(config['db_mapping']['entry']['vend_id']),
             column(config['db_mapping']['entry']['amount']),
             column(config['db_mapping']['entry']['entry_date']),
             column(config['db_mapping']['entry']['last_updated'])
         )
     
-    #Check for category and subcategory inconsistencies
-    print('[PENNY] Checking for record integrity..')
-    ld.verify_count(engine_url, cat, cf_cat)
-    ld.verify_count(engine_url, sbcat, cf_sbcat)
+    #Prefill categories
+    #TODO: Optimize for O(n) time
+    #TODO: Add logic to ignore if categories have already been prefilled
+    for catlabel in db['pre_fill']['category']:
+        sblabel = db['pre_fill']['category'][catlabel]
+        
+        #Build insert for d_category
+        ld.insert_into(engine_url, cat, {'category_desc': catlabel})
+        
+        for i in sblabel:
+            #Build insert for d_subcategory
+            ld.insert_into(engine_url, sbcat, {'subcategory_desc': i})
+            
+            
+            #Build insert for j_type
+            cid = table_to_dict(ld.select_from(engine_url, cat))
+            sbid = table_to_dict(ld.select_from(engine_url, sbcat))
+            
+            j_payload = {'category_id': cid[catlabel], 'subcategory_id': sbid[i]}
+            ld.insert_into(engine_url, j_type, j_payload)
+
+    #Remove variables to reduce scope errors
+    del sblabel 
+    del j_payload
+    del cid
+    del sbid
 
     #Check and process new vendors from extract
     print('[PENNY] Checking for new vendors...')
@@ -134,8 +162,15 @@ def main():
 
     #Load IDs from dimension tables
     vend_dict = table_to_dict(ld.select_from(engine_url, vend))
-    cat_dict = table_to_dict(ld.select_from(engine_url, cat))
-    sbcat_dict = table_to_dict(ld.select_from(engine_url, sbcat))
+    cat_dict = table_to_dict(ld.select_from(engine_url, cat), inverse=True)
+    sbcat_dict = table_to_dict(ld.select_from(engine_url, sbcat), inverse=True)
+
+    jt_dict = dict()
+    for i in ld.select_from(engine_url, j_type):
+        temp_key = cat_dict[i[1]] + sbcat_dict[i[2]]
+        
+        jt_dict[temp_key] = i[0]
+
     person_dict = dict()
     for i in ld.select_from(engine_url, person):
         person_dict[i[1]] = i[0]
@@ -148,8 +183,8 @@ def main():
         fact_list.append({
             'eid': entry[1],
             'item_desc': entry[3],
-            'category_id': cat_dict[entry[5]],
-            'subcategory_id': sbcat_dict[entry[6]],
+            #TODO: Add j_type id here
+            'type_id': jt_dict[entry[5]+entry[6]],
             'vendor_id': vend_dict[entry[7]],
             'amount': entry[4],
             'entry_record_date': entry[2],
