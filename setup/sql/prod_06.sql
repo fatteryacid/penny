@@ -1,10 +1,7 @@
---Create distribution table
-DROP TABLE d_person_distribution;
+DROP TABLE d_person;
 
-CREATE TABLE d_person_distribution (
-    distribution_id SERIAL NOT NULL PRIMARY KEY,
-    eid CHAR(17) NOT NULL,
-    person_id INT NOT NULL,
-    CONSTRAINT fk_entry FOREIGN KEY (eid) REFERENCES f_entries(eid),
-    CONSTRAINT fk_person FOREIGN KEY (person_id) REFERENCES d_person(person_id)
+CREATE TABLE d_person (
+    person_id SERIAL NOT NULL PRIMARY KEY,
+    first_name VARCHAR(30) NOT NULL,
+    last_name VARCHAR(30)
 );
