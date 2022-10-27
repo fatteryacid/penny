@@ -159,6 +159,11 @@
                     "arts_and_crafts",
                     "music"
                 ]
+            },
+            "person": {
+                "FIRSTNAME1": "LASTNAME",
+                "FIRSTNAME2": "LASTNAME",
+                "FIRSTNAME3": "LASTNAME"
             }
         }
     }

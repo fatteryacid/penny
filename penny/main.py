@@ -158,6 +158,10 @@ def main():
         del cid
         del sbid
 
+        #Prefill d_person
+        for fname in db['pre_fill']['person'].keys():
+            ld.insert_into(engine_url, person, {fname: db['pre_fill']['person'][fname]})
+
         #Check and process new vendors from extract
         print('[PENNY] Checking for new vendors...')
         cur_vendor = set()
@@ -198,7 +202,6 @@ def main():
             fact_list.append({
                 'eid': entry[1],
                 'item_desc': entry[3],
-                #TODO: Add j_type id here
                 'type_id': jt_dict[entry[5]+entry[6]],
                 'vendor_id': vend_dict[entry[7]],
                 'amount': entry[4],
@@ -230,6 +233,9 @@ def main():
             
         ld.insert_into(engine_url, fact, fact_list)
         ld.insert_into(engine_url, distribution, dist_list)
+    
+    else:
+        print('[PENNY] No new entries to insert.')
 
     print('[PENNY] Job complete. Terminating.')
 

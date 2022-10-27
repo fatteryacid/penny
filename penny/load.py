@@ -23,14 +23,14 @@ def select_from(engine_url, table_object):
     
     #Catch empty return or more than 1 return
     if len(result) <= 0:
-        raise Exception('[PENNY] [FATAL]: Search returned empty ID.')
+        raise Exception('[PENNY] FATAL ERROR: Search returned empty ID.')
     
     else:
         return result
 
 def insert_into(engine_url, table_object, value_list):
     if len(value_list) <= 0:
-        print('[PENNY] [WARNING]: No values to insert.')
+        print('[PENNY] WARNING: No values to insert.')
         return
     
     db = create_engine(engine_url)
@@ -42,7 +42,7 @@ def insert_into(engine_url, table_object, value_list):
                 value_list
             )
     except exc.IntegrityError:
-        print('[PENNY] [WARNING]: Attempted to create duplicate data')
+        print('[PENNY] WARNING: Attempted to create duplicate data')
         
     db.dispose()
 
@@ -58,10 +58,10 @@ def verify_count(engine_url, table_object, frontend_labels):
     frontend_count = int(len(frontend_labels))
     
     if backend_count > frontend_count:
-        raise Exception('[PENNY] [FATAL]: Less records found in database than expected.')
+        raise Exception('[PENNY] FATAL ERROR: Less records found in database than expected.')
 
     elif backend_count < frontend_count:
-        raise Exception('[PENNY] [FATAL]: More records found in database than expected.')
+        raise Exception('[PENNY] FATAL ERROR: More records found in database than expected.')
 
     else:
         print('[PENNY] Record match pass.')
