@@ -46,22 +46,3 @@ def insert_into(engine_url, table_object, value_list):
         
     db.dispose()
 
-def verify_count(engine_url, table_object, frontend_labels):
-    db = create_engine(engine_url)
-    stmt = select(func.count(table_object.c[0]))
-    
-    with db.connect() as conn:
-        result = conn.execute(stmt).fetchall()
-        conn.close()
-        
-    backend_count = int(result[0][0])
-    frontend_count = int(len(frontend_labels))
-    
-    if backend_count > frontend_count:
-        raise Exception('[PENNY] FATAL ERROR: Less records found in database than expected.')
-
-    elif backend_count < frontend_count:
-        raise Exception('[PENNY] FATAL ERROR: More records found in database than expected.')
-
-    else:
-        print('[PENNY] Record match pass.')
