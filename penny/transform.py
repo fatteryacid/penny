@@ -69,7 +69,7 @@ def process_ignore(df, ignore_list=None):
 def trunc_df(df, latest_id=None):
     #Truncate df if id exists
     if latest_id is not None:
-        index = df.index[df['id'] == latest_id].to_list()[0]
+        index = df.index[df['id'] == latest_id].to_list()[0] + 1
         df = df.truncate(before=index)
     
     return df
