@@ -31,9 +31,9 @@ def table_to_dict(table, inverse=False):
 # ==================================================
 # Variables
 path = {
-    'db': './config/secret_db_conf.json',
-    'gs': './config/secret_gs_conf.json',
-    'sv': './config/secret_save.json'
+    'db': './config/db_conf.json',
+    'gs': './config/gs_conf.json',
+    'sv': './config/save.json'
 }
 
 with open(path['db']) as f:
