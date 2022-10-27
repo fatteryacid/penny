@@ -3,6 +3,6 @@ dropdb penny
 createdb penny
 
 for filename in ./sql/*.sql; do
-    psql -d penny_stg -f $filename
+    psql -d penny -f $filename
 done
 
