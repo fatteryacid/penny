@@ -33,9 +33,9 @@ def table_to_dict(table, inverse=False):
 # ==================================================
 # Variable
 path = {
-    'db': '../penny/config/secret_db_conf.json',
-    'gs': '../penny/config/secret_gs_conf.json',
-    'sv': '../penny/config/secret_save.json'
+    'db': '../penny/config/db_conf.json',
+    'gs': '../penny/config/gs_conf.json',
+    'sv': '../penny/config/save.json'
 }
 
 with open(path['db']) as f:
