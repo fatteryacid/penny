@@ -84,7 +84,7 @@ def main():
         if type(new_state) != str:
             raise Exception('[PENNY] FATAL ERROR: Writing to config failed.')
         else:
-            with open('../secret/secret_config.json', 'w') as out:
+            with open('./config.json', 'w') as out:
                 out.write(new_state)
 
         #Create db table variables
