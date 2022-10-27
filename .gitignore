@@ -129,8 +129,7 @@ dmypy.json
 .pyre/
 
 # Secret
-.secret 
-secret/
+secret_*
 
 # Jupyter NB
 .ipynb_checkpoints
