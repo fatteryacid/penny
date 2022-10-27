@@ -1,0 +1,19 @@
+{
+    "target_sheet": "YOUR SHEET ID HERE",
+    "worksheet_location": 0,
+    "sheet_mapping": {
+        "id": "id",
+        "date": "date",
+        "item": "item",
+        "amount": "amount",
+        "category": "category",
+        "subcategory": "subcategory",
+        "vendor": "vendor",
+        "distribution": [
+            "YOUR COLUMN NAMES HERE"
+        ],
+        "ignore": [
+            "per person"
+        ]
+    }
+}
