@@ -160,7 +160,8 @@ def main():
 
         #Prefill d_person
         for fname in db['pre_fill']['person'].keys():
-            ld.insert_into(engine_url, person, {fname: db['pre_fill']['person'][fname]})
+            ld.insert_into(engine_url, person, {'first_name': fname,
+                                                'last_name': db['pre_fill']['person'][fname]})
 
         #Check and process new vendors from extract
         print('[PENNY] Checking for new vendors...')
