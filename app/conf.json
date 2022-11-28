@@ -1,0 +1,28 @@
+{
+    "gs": {
+        "sheet_id": "Your sheet id here",
+        "col_start": "Follows A1 format. For example if your spreadsheet range is A1:J100, your col_start will be `A`",
+        "col_end": "Follows A1 format. For example if your spreadsheet range is A1:J100, your col_end will be `J`",
+        "headers": [
+            "date",
+            "item",
+            "amount",
+            "category",
+            "subcategory",
+            "vendor",
+            "Add your person(s) involved here. You may add more than one person as additional entries with their first name."
+        ]
+    },
+    "db": {
+        "platform": "postgresql+psycopg2",
+        "user": "Your database username",
+        "pass": "Your database password",
+        "host": "Your database host ip",
+        "port": "Your database port",
+        "name": "Your database name"
+    },
+    "penny": {
+        "batch_size": 1000,
+        "timezone": "America/Los_Angeles"
+    }
+}
