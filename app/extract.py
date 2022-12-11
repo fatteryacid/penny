@@ -9,6 +9,15 @@ import pendulum
 
 
 # ==================================================
+# Notes
+'''
+Issue is that the logic i'm using for the extract script to stop is failing when script isc alled on no new data
+
+'''
+
+
+
+# ==================================================
 # Def main
 def main():
     last_run = False
@@ -33,15 +42,19 @@ def main():
             
         #Call API
         inst.fetch(desired_range=select_range, headers=config['gs']['headers'])
-            
-        #Clean data for processing
-        inst.prepare()
+
+        #Breaks loop when extract is called on no new data
+        if inst.size is None:
+            break
+
+        #Build IDs
+        inst.enrich(config['penny']['timezone'])
 
         #Push to database
         engine_url = f'{config["db"]["platform"]}://{config["db"]["user"]}:{urllib.parse.quote_plus(config["db"]["pass"])}@{config["db"]["host"]}:{config["db"]["port"]}/{config["db"]["name"]}'
         inst.commit(
                 engine_url = engine_url,
-                rel_name = 'stg_all'
+                rel_name = 'raw'
             )
 
         #Update the config
@@ -57,10 +70,10 @@ def main():
         #Compare DataFrame size to expected size
         if inst.size < row_end - cache['row_start']:
             last_run = True
-            inst.done()
 
 
 # ==================================================
 # Execute
 if __name__ == '__main__':
     main()
+

@@ -1,5 +1,6 @@
 # ==================================================
 import pandas as pd
+import pendulum
 import uuid
 
 import pickle
@@ -29,7 +30,6 @@ class Data():
         self.df = None
         self.cred = None
         self.length = None
-        self.initialization = True
 
     def __repr__(self):
         return self.df.head(20)
@@ -40,8 +40,8 @@ class Data():
         
     def auth(self):
         #Checks for existing tokens
-        if os.path.exists('./secret/token.pickle'):
-            with open('./secret/token.pickle', 'rb') as token:
+        if os.path.exists('./secret/secret_token.pickle'):
+            with open('./secret/secret_token.pickle', 'rb') as token:
                 self.cred = pickle.load(token)
 
 
@@ -52,14 +52,15 @@ class Data():
 
             else:
                 scope = ['https://www.googleapis.com/auth/spreadsheets.readonly']
-                flow = InstalledAppFlow.from_client_secrets_file('./secret/client_secrets.json', scopes=scope)
+                flow = InstalledAppFlow.from_client_secrets_file('./secret/secret_client_secrets.json', scopes=scope)
 
                 flow.run_local_server(port=5537, prompt='consent', authorization_prompt_message='')
+                print('Reauthorization needed. Visit localhost:5537.')
 
                 self.cred = flow.credentials
 
             #Writes token for future use
-            with open('./secret/token.pickle', 'wb') as f:
+            with open('./secret/secret_token.pickle', 'wb') as f:
                 pickle.dump(self.cred, f)
           
     def fetch(self, desired_range, headers):
@@ -83,11 +84,17 @@ class Data():
             self.df = pd.DataFrame(result['values'], columns=headers)
             self.length = len(result['values']) - 1
 
-        #Throw exception on no new data for Airflow to catch
         else:
-            self.done()
+            pass
 
-    #Prepare data for staging environment
+    #Used to build UUIDs for data integrity and granularity
+    def enrich(self, timezone):
+        #Create UUIDs for each entry
+        self.df['id'] = [uuid.uuid4() for _ in range(len(self.df.index))]
+        self.df['extract_date'] = [pendulum.now(timezone).to_datetime_string() for _ in range(len(self.df.index))]
+
+
+    #Deprecate this, will handle in dbt
     def prepare(self):
         #Process strings
         for i in self.df.columns:
@@ -120,31 +127,20 @@ class Data():
         self.df['amount'] = temp
         self.df['amount'] = pd.to_numeric(self.df['amount'])
 
-        #Create UUIDs for each entry
-        self.df['id'] = [uuid.uuid4() for _ in range(len(self.df.index))]
 
     #Send to db
     def commit(self, engine_url, rel_name):
+        if self.df.isnull().any().any():
+            raise Exception('NullError')
+
         engine = create_engine(engine_url, echo=False)
 
-        #On first run, replace staging_environment in database
-        if self.initialization:
-            self.df.to_sql(
-                    name = rel_name, 
-                    con=engine,
-                    if_exists='replace',
-                    index=False
-                )
-            self.initialization = False
-
-        #On subsequent runs, add fresh data to staging_environment
-        else:
-            self.df.to_sql(
-                    name = rel_name, 
-                    con=engine,
-                    if_exists='append',
-                    index=False
-                )
+        self.df.to_sql(
+                name = rel_name, 
+                con=engine,
+                if_exists='append',
+                index=False
+            )
             
 
         engine.dispose()
@@ -163,6 +159,4 @@ class Data():
         else:
             return self.df.tail()
         
-    def done(self):
-        raise Exception('NoDataError')
     
