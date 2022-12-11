@@ -1,27 +1,21 @@
 # Financial ETL Process
+*Version 1.0.0.1*
 Moves and models date from Google Sheets to a local PostgreSQL database.
 Data is modeled with dimensional modeling practices.
 
 
-## Installation
-Application should install dependencies by itself upon calling:
-```
-bash run.sh
-```
+# What's new for Version 1.0.0.1
+* Moved away from `gspread` as a dependency. Now uses Google Sheets API directly.
+    - With this comes need for OAuth usage. Will open a Google Authentication webpage on: `localhost:5537`.
+* Moved away from ETL paradigm to ELT paradigm.
+    - Workflow: GoogleSheets > Pandas > dbt
+    - Users can add new models to `penny/app/dbt/penny/model/`. All models must reference `fact` relation by using: `{{ ref('fact') }}`.
+    - SQLAlchemy is no longer the method of insertion to database. Instead, uses SQLAlchemy under the hood through Pandas.
+* Airflow support provided with `airflow_dag.py`.
 
 
-However, certain `gspread` may not be properly configured in terms of using Google Service Accounts.
-Please refer to the [official GSpread documentation](https://docs.gspread.org/en/latest/oauth2.html#service-account) for installation instructions.
 
-For further information on dependencies, please read requirements.txt.
-
-
-## Usage
-To make the most out of `penny`, use `cron` to schedule `bash /YOUR_DIRECTORY/run.sh` to run on a weekly schedule.
-Alternatively, you can manually run `bash/YOUR_DIRECTORY/run.sh`
-
-
-## Future Changes
-* Convert to object-oriented design to instantiate table objects
-* Convert from using SQLAlchemy CORE to ORM
-* Add orchestration, possibly with AirFlow
+## Planned Changes
+1. Dockerize with `Airflow` to write to external database.
+2. Clean up `/penny/app/dbt/penny` directories.
+3. Reorganize all configuration files.
