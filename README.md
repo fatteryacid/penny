@@ -1,5 +1,7 @@
 # Financial ETL Process
 *Version 1.0.0.1*
+
+
 Moves and models date from Google Sheets to a local PostgreSQL database.
 Data is modeled with dimensional modeling practices.
 
