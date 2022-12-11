@@ -1,0 +1,15 @@
+version: 2
+
+sources:
+  - name: raw_data
+    schema: public
+    description: A copy of information from Google Sheets with UUIDs generated from extraction script.
+    tables:
+      - name: raw
+        description: One record per transaction. Multiple entities may be tied to a singular transaction.
+        columns:
+          - name: id
+            description: PK of this table
+            tests:
+              - unique
+              - not_null
